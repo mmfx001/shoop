@@ -5,29 +5,29 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-// Express ilovasini yaratish
+// Express application
 const app = express();
 
-// Middleware'lar
+// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// MongoDB ulanishi
+// MongoDB connection
 const mongoURI = 'mongodb+srv://dilbekshermatov:dilbek1233@cluster0.y5hh3.mongodb.net/mydatabase?retryWrites=true&w=majority';
 
-// Mongoose bilan MongoDB'ga ulanish
+// Connect to MongoDB using Mongoose
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     connectTimeoutMS: 30000, 
     socketTimeoutMS: 45000  
 })
-.then(() => console.log('MongoDB bilan muvaffaqiyatli ulandi'))
-.catch(err => console.error('MongoDB ulanish xatosi:', err));
+.then(() => console.log('Successfully connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
-// Mongoose modellarini ta'riflash
+// Define Mongoose models
 
-// 1. Tort modeli
+// 1. Tort model
 const TortSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     rasm: { type: String, required: true },
@@ -45,7 +45,7 @@ const TortSchema = new mongoose.Schema({
 
 const Tort = mongoose.model('Tort', TortSchema);
 
-// 2. QolMehnati modeli
+// 2. QolMehnati model
 const QolMehnatiSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     rasm: { type: String, required: true },
@@ -63,7 +63,7 @@ const QolMehnatiSchema = new mongoose.Schema({
 
 const QolMehnati = mongoose.model('QolMehnati', QolMehnatiSchema);
 
-// 3. Kiyimlar modeli
+// 3. Kiyimlar model
 const KiyimlarSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     rasm: { type: String, required: true },
@@ -81,44 +81,20 @@ const KiyimlarSchema = new mongoose.Schema({
 
 const Kiyimlar = mongoose.model('Kiyimlar', KiyimlarSchema);
 
-// 4. User modeli
-const LikedItemSchema = new mongoose.Schema({
-    id: { type: String, required: true },
-    nomi: { type: String, required: true },
-    tafsiv: { type: String, required: true },
-    narx: { type: String, required: true },
-    telefon: { type: String, required: true },
-    rasm: { type: String, required: true },
-    manzil: { type: String, required: true },
-    email: { type: String, required: true },
-    submittedAt: { type: String, required: true },
-    likeCount: { type: Number, default: 0 },
-    location: { type: String, required: true }
-}, { _id: false });
-
-const ViewedItemSchema = new mongoose.Schema({
-    id: { type: String, required: true },
-    narx: { type: String, required: true },
-    email: { type: String, required: true },
-    tafsif: { type: String, required: true },
-    nomi: { type: String, required: true },
-    viewedAt: { type: Date, required: true }
-}, { _id: false });
-
-
+// 4. User model
 const UserSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    likedItems: [LikedItemSchema],
-    viewedItems: [ViewedItemSchema],
+    likedItems: [String],
+    viewedItems: [String],
     likeCount: { type: Number, default: 0 },
     submissionLimit: { type: Number, default: 6 }
 });
 
 const User = mongoose.model('User', UserSchema);
 
-// 5. TortBuyurtmalari modeli
+// 5. TortBuyurtmalari model
 const TortBuyurtmalariSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     nomi: { type: String, required: true },
@@ -135,7 +111,7 @@ const TortBuyurtmalariSchema = new mongoose.Schema({
 
 const TortBuyurtmalari = mongoose.model('TortBuyurtmalari', TortBuyurtmalariSchema);
 
-// 6. QolMehnatiBuyurtmalari modeli
+// 6. QolMehnatiBuyurtmalari model
 const QolMehnatiBuyurtmalariSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     nomi: { type: String, required: true },
@@ -152,7 +128,7 @@ const QolMehnatiBuyurtmalariSchema = new mongoose.Schema({
 
 const QolMehnatiBuyurtmalari = mongoose.model('QolMehnatiBuyurtmalari', QolMehnatiBuyurtmalariSchema);
 
-// 7. KiyimlarBuyurtmalari modeli
+// 7. KiyimlarBuyurtmalari model
 const KiyimlarBuyurtmalariSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     nomi: { type: String, required: true },
@@ -169,7 +145,7 @@ const KiyimlarBuyurtmalariSchema = new mongoose.Schema({
 
 const KiyimlarBuyurtmalari = mongoose.model('KiyimlarBuyurtmalari', KiyimlarBuyurtmalariSchema);
 
-// 8. BarchaElonlar modeli
+// 8. BarchaElonlar model
 const BarchaElonlarSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     rasm: { type: String, required: true },
@@ -187,7 +163,7 @@ const BarchaElonlarSchema = new mongoose.Schema({
 
 const BarchaElonlar = mongoose.model('BarchaElonlar', BarchaElonlarSchema);
 
-// 9. BarchaBuyurtmalar modeli
+// 9. BarchaBuyurtmalar model
 const BarchaBuyurtmalarSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     nomi: { type: String, required: true },
@@ -203,8 +179,7 @@ const BarchaBuyurtmalarSchema = new mongoose.Schema({
 
 const BarchaBuyurtmalar = mongoose.model('BarchaBuyurtmalar', BarchaBuyurtmalarSchema);
 
-
-// 10. Message modeli
+// 10. Message model
 const MessageSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     sender: { type: String, required: true },
@@ -216,103 +191,72 @@ const MessageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', MessageSchema);
 
-// 11. Comment modeli
+// 11. Comment model
 const CommentSchema = new mongoose.Schema({
     id: { type: String, required: true, unique: true },
     productId: { type: String, required: true },
     comment: { type: String, required: true },
-    userEmail: { type: String, required: true },
-    timestamp: { type: Date, required: true }
+    userId: { type: String, required: true },
+    submittedAt: { type: String, required: true }
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
 
-// CRUD API Endpoints
-
-// Utility funksiyasi: Model nomi va modelni qabul qilib, CRUD endpointlarini yaratish
-const createCRUDRoutes = (basePath, Model) => {
-    // GET barcha hujjatlarni olish
-    app.get(`${basePath}`, async (req, res) => {
+// Helper function to create CRUD routes for a model
+function createCRUDRoutes(model, path) {
+    app.get(`/${path}`, async (req, res) => {
         try {
-            const items = await Model.find();
+            const items = await model.find();
             res.json(items);
-        } catch (err) {
-            res.status(500).json({ message: err.message });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to fetch items' });
         }
     });
 
-    // GET bitta hujjatni id bo'yicha olish
-    app.get(`${basePath}/:id`, getItem(Model), (req, res) => {
-        res.json(res.item);
-    });
-
-    // POST yangi hujjat qo'shish
-    app.post(`${basePath}`, async (req, res) => {
-        const item = new Model(req.body);
+    app.post(`/${path}`, async (req, res) => {
         try {
-            const newItem = await item.save();
-            res.status(201).json(newItem);
-        } catch (err) {
-            res.status(400).json({ message: err.message });
+            const newItem = new model(req.body);
+            const savedItem = await newItem.save();
+            res.status(201).json(savedItem);
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to create item' });
         }
     });
 
-    // PUT (yangilash) mavjud hujjatni id bo'yicha
-    app.put(`${basePath}/:id`, getItem(Model), async (req, res) => {
-        Object.assign(res.item, req.body);
+    app.put(`/${path}/:id`, async (req, res) => {
         try {
-            const updatedItem = await res.item.save();
+            const updatedItem = await model.findByIdAndUpdate(req.params.id, req.body, { new: true });
             res.json(updatedItem);
-        } catch (err) {
-            res.status(400).json({ message: err.message });
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to update item' });
         }
     });
 
-    // DELETE mavjud hujjatni id bo'yicha
-    app.delete(`${basePath}/:id`, getItem(Model), async (req, res) => {
+    app.delete(`/${path}/:id`, async (req, res) => {
         try {
-            await res.item.remove();
-            res.json({ message: 'Deleted' });
-        } catch (err) {
-            res.status(500).json({ message: err.message });
+            await model.findByIdAndDelete(req.params.id);
+            res.json({ message: 'Item deleted successfully' });
+        } catch (error) {
+            res.status(400).json({ error: 'Failed to delete item' });
         }
     });
-};
-
-// Middleware funksiyasi: Hujjatni topish
-function getItem(Model) {
-    return async (req, res, next) => {
-        let item;
-        try {
-            item = await Model.findOne({ id: req.params.id });
-            if (item == null) {
-                return res.status(404).json({ message: 'Cannot find item' });
-            }
-        } catch (err) {
-            return res.status(500).json({ message: err.message });
-        }
-
-        res.item = item;
-        next();
-    };
 }
 
-// Endpointlar yaratish
+// Define CRUD routes for each model
+createCRUDRoutes(Tort, 'tort');
+createCRUDRoutes(QolMehnati, 'qolMehnati');
+createCRUDRoutes(Kiyimlar, 'kiyimlar');
+createCRUDRoutes(User, 'users');
+createCRUDRoutes(TortBuyurtmalari, 'tortBuyurtmalari');
+createCRUDRoutes(QolMehnatiBuyurtmalari, 'qolMehnatiBuyurtmalari');
+createCRUDRoutes(KiyimlarBuyurtmalari, 'kiyimlarBuyurtmalari');
+createCRUDRoutes(BarchaElonlar, 'barchaElonlar');
+createCRUDRoutes(BarchaBuyurtmalar, 'barchaBuyurtmalar');
+createCRUDRoutes(Message, 'messages');
+createCRUDRoutes(Comment, 'comments');
 
-createCRUDRoutes('/tort', Tort);
-createCRUDRoutes('/qolmehnati', QolMehnati);
-createCRUDRoutes('/kiyimlar', Kiyimlar);
-createCRUDRoutes('/users', User);
-createCRUDRoutes('/tortbuyurtmalari', TortBuyurtmalari);
-createCRUDRoutes('/qolmehnatibuyurtmalari', QolMehnatiBuyurtmalari);
-createCRUDRoutes('/kiyimlarbuyurtmalari', KiyimlarBuyurtmalari);
-createCRUDRoutes('/barchaelonlar', BarchaElonlar);
-createCRUDRoutes('/barchabuyurtmalar', BarchaBuyurtmalar);
-createCRUDRoutes('/messages', Message);
-createCRUDRoutes('/comments', Comment);
-
-// Serverni ishga tushurish
-const PORT = process.env.PORT || 5002;
+// Start the server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server ${PORT} portda ishlamoqda`);
+    console.log(`Server ${PORT}...da ishga tushdi`);
 });
